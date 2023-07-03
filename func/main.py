@@ -87,6 +87,7 @@ class HeadHunterAPI(GetVacancy):
         return vacancies
 
 
+
 class Vacancy:
     def __init__(self, title, link, salary, requirements):
         self.title = title
@@ -105,10 +106,14 @@ class JSONSaver:
     def delete_vacancy(self, vacancy):
         self.vacancies.remove(vacancy)
 
-    def save_to_file(self, file_name):
-        with open(file_name, "w") as file:
-            for vacancy in self.vacancies:
-                json.dump(vacancy, file)
+    def save_to_file(self, file_name="vacancy"):
+        #Через file_name="vacancy" не работает
+        if file_name == "":
+            file_name = "vacancy"
+        file_path = '/home/course/course_25.06.23/Job_parser_project/func'
+        with open(f"{file_path}/{file_name}.json", "w") as file:
+            json.dump(self.vacancies, file)
+
 
 
 def print_vacancy(vacancy):
