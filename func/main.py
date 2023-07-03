@@ -1,13 +1,18 @@
+#Начало работы программы
+input("для начала нажмите 'enter'")
+
 import json
 import os
 from abc import ABC, abstractmethod
-
 import requests
-
-input("для начала нажмите 'enter'")
+#Получение api
 api = os.getenv("SUPER_JOB_API_KEY")
 
 
+
+"""
+Абстрактный класс
+"""
 class GetVacancy(ABC):
 
     @abstractmethod
@@ -18,7 +23,10 @@ class GetVacancy(ABC):
     def get_vacancies_hh(self):
         pass
 
-
+"""
+Основное тело программы
+"""
+#Класс получения вакансий из Superjob
 class SuperJobAPI(GetVacancy):
     def __init__(self):
         pass
@@ -57,7 +65,7 @@ class SuperJobAPI(GetVacancy):
     def get_vacancies_hh(self):
         pass
 
-
+#Класс получения вакансий из HeadHunter
 class HeadHunterAPI(GetVacancy):
     def __init__(self):
         pass
@@ -87,7 +95,7 @@ class HeadHunterAPI(GetVacancy):
         return vacancies
 
 
-
+#Класс вакансии
 class Vacancy:
     def __init__(self, title, link, salary, requirements):
         self.title = title
@@ -95,7 +103,7 @@ class Vacancy:
         self.salary = salary
         self.requirements = str(requirements).replace('<highlighttext>1</highlighttext>', '')
 
-
+#Класс взаимодействия с вакансиями
 class JSONSaver:
     def __init__(self):
         self.vacancies = []
@@ -114,7 +122,9 @@ class JSONSaver:
         with open(f"{file_path}/{file_name}.json", "w") as file:
             json.dump(self.vacancies, file)
 
-
+"""
+Вывод на экран
+"""
 
 def print_vacancy(vacancy):
     print(f"Вакансия: {vacancy['title']}")
@@ -143,9 +153,15 @@ def main_menu():
     return choice
 
 
+
+
+
+"""
+Взаимодействие с пользователем
+"""
+#Создание экземпляра класса JSONSaver
 vacancy_storage = JSONSaver()
-
-
+#Выбор перовго пункта меню
 def choice_one(hh_api):
     keyword = input("Введите ключевое слово для поиска: ")
     top_n = input("Введите количество вакансий для вывода в топ: ")
@@ -175,7 +191,7 @@ def choice_one(hh_api):
         print("Вакансии успешно добавлены")
 
 
-
+#Выбор второго пункта меню
 def choice_two(superjob_api):
     keyword = input("Введите ключевое слово для поиска: ")
     top_n = input("Введите количество вакансий для вывода в топ: ")
@@ -203,7 +219,7 @@ def choice_two(superjob_api):
                 counter += 1
         print("Вакансии успешно добавлены")
 
-
+#Выбор третьего пункта меню
 def choice_three(hh_api, superjob_api):
     keyword = input("Введите ключевое слово для поиска: ")
     top_n = input("Введите количество вакансий для вывода в топ: ")
@@ -233,6 +249,7 @@ def choice_three(hh_api, superjob_api):
         print("Вакансии успешно добавлены")
 
 
+#Выбор четвёртого пункта меню
 def coice_four():
     while True:
         indexes = []
@@ -252,11 +269,11 @@ def coice_four():
             print("Вакансия успешно удалена")
             break
 
-
+#Выбор пятого пункта меню
 def choice_five():
     vacancy_storage.save_to_file(input("Введите название файла:"))
 
-
+#Возврат в меню
 def end_question():
     while True:
         back = input("Вернуться в меню?\nНапишите:'Да' или 'Нет'").lower()
@@ -267,7 +284,7 @@ def end_question():
         else:
             print("Нет такого варианта ответа")
 
-
+#функция взаимодействия
 def user_interaction():
     hh_api = HeadHunterAPI()
     superjob_api = SuperJobAPI()
