@@ -12,6 +12,15 @@ def print_vacancy(vacancy):
         slr = vacancy['salary'].split("-")
         vacancy['salary'] = {"from": slr[1], "to": slr[0]}
         print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
+    elif vacancy["salary"]["to"] is None:
+        if not vacancy["salary"]["from"] is None:
+            vacancy['salary']["to"] = vacancy['salary']["from"]
+        else:
+            vacancy['salary']["to"] = ""
+        print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
+    elif vacancy["salary"]["from"] is None:
+        vacancy['salary']["from"] = 0
+        print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
     else:
         print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
     print(f"Требования: {vacancy['requirements']}")

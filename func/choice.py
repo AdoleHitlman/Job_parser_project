@@ -1,5 +1,6 @@
-from vacancy_saver import Vacancy,JSONSaver
 from output import print_vacancy
+from vacancy_saver import Vacancy, JSONSaver, sort_vacancies
+
 """
 Взаимодействие с пользователем
 """
@@ -10,9 +11,12 @@ vacancy_storage = JSONSaver()
 # Выбор перовго пункта меню
 def choice_one(hh_api):
     keyword = input("Введите ключевое слово для поиска: ")
-    top_n = input("Введите количество вакансий для вывода в топ: ")
-    if not top_n.isdigit():
-        top_n = len(top_n)
+    top_n = ""
+    while not type(top_n) == int:
+        try:
+            top_n = int(input("Введите количество вакансий для вывода в топ n: "))
+        except ValueError:
+            print("Надо ввести цифру")
     vacancies = hh_api.get_vacancies(keyword)
     counter = 0
     for vacancy_data in vacancies:
@@ -24,25 +28,48 @@ def choice_one(hh_api):
 
             print_vacancy(vacancy_dir)
             counter += 1
-
-    answer = input("Добавить вакансии?\nНапишите:'Да' или 'Нет'").lower()
-    if answer == "да":
-        counter = 0
-        for vacancy_data in vacancies:
-            if counter < int(top_n):
-                vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+    answer = 0
+    while answer != 3:
+        answer = int(input("Выберете что сделать с вакансиями\n1:Отсортировать\n2:Добавить в список вакансий\n3:Выход"))
+        if answer == 2:
+            counter = 0
+            for vacancy_data in vacancies:
+                if counter < int(top_n):
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
                                         salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
-                vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link, 'salary': vacancy_class.salary,
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link, 'salary': vacancy_class.salary,
                                "requirements": vacancy_class.requirements}
-                vacancy_storage.add_vacancy(vacancy_dir)
-                counter += 1
-        print("Вакансии успешно добавлены")
+                    vacancy_storage.add_vacancy(vacancy_dir)
+                    counter += 1
+            print("Вакансии успешно добавлены")
+        elif answer == 1:
+            counter = 0
+            vacancises_to_sort = []
+            for vacancy_data in vacancies:
+                if counter < top_n:
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+                                salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link, 'salary': vacancy_class.salary,
+                       "requirements": vacancy_class.requirements}
+                    vacancises_to_sort.append(vacancy_dir)
+                    counter += 1
+            for vacancy in sort_vacancies(vacancises_to_sort):
+                counter = 0
+                if counter < top_n:
+                    print_vacancy(vacancy)
+                    counter +=1
+
 
 
 # Выбор второго пункта меню
 def choice_two(superjob_api):
     keyword = input("Введите ключевое слово для поиска: ")
-    top_n = int(input("Введите количество вакансий для вывода в топ: "))
+    top_n = ""
+    while not type(top_n) == int:
+        try:
+            top_n = int(input("Введите количество вакансий для вывода в топ n: "))
+        except ValueError:
+            print("Надо ввести цифру")
     vacancies = superjob_api.get_vacancies(keyword)
     counter = 0
     for vacancy_data in vacancies:
@@ -53,25 +80,49 @@ def choice_two(superjob_api):
                            "requirements": vacancy_class.requirements}
             print_vacancy(vacancy_dir)
             counter += 1
-
-    answer = input("Добавить вакансии?\nНапишите:'Да' или 'Нет'").lower()
-    if answer == "да":
-        counter = 0
-        if counter < int(top_n):
+    answer = 0
+    while answer != 3:
+        answer = int(input("Выберете что сделать с вакансиями\n1:Отсортировать\n2:Добавить в список вакансий\n3:Выход"))
+        if answer == 2:
+            counter = 0
             for vacancy_data in vacancies:
-                vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
-                                        salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
-                vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link, 'salary': vacancy_class.salary,
-                               "requirements": vacancy_class.requirements}
-                vacancy_storage.add_vacancy(vacancy_dir)
-                counter += 1
-        print("Вакансии успешно добавлены")
+                if counter < int(top_n):
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+                                            salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link,
+                                   'salary': vacancy_class.salary,
+                                   "requirements": vacancy_class.requirements}
+                    vacancy_storage.add_vacancy(vacancy_dir)
+                    counter += 1
+            print("Вакансии успешно добавлены")
+        elif answer == 1:
+            counter = 0
+            vacancises_to_sort = []
+            for vacancy_data in vacancies:
+                if counter < top_n:
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+                                            salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link,
+                                   'salary': vacancy_class.salary,
+                                   "requirements": vacancy_class.requirements}
+                    vacancises_to_sort.append(vacancy_dir)
+                    counter += 1
+            for vacancy in sort_vacancies(vacancises_to_sort):
+                counter = 0
+                if counter < top_n:
+                    print_vacancy(vacancy)
+                    counter += 1
 
 
 # Выбор третьего пункта меню
 def choice_three(hh_api, superjob_api):
     keyword = input("Введите ключевое слово для поиска: ")
-    top_n = int(input("Введите количество вакансий для вывода в топ: "))
+    top_n = ""
+    while not type(top_n) == int:
+        try:
+            top_n = int(input("Введите количество вакансий для вывода в топ n: "))
+        except ValueError:
+            print("Надо ввести цифру")
     vacancies = [*superjob_api.get_vacancies(keyword), *hh_api.get_vacancies(keyword)]
     counter = 0
     for vacancy_data in vacancies:
@@ -83,19 +134,38 @@ def choice_three(hh_api, superjob_api):
             print_vacancy(vacancy_dir)
             counter += 1
 
-    answer = input("Добавить вакансии?\nНапишите:'Да' или 'Нет'").lower()
-    if answer == "да":
-        counter = 0
-        if counter < int(top_n):
+    answer = 0
+    while answer != 3:
+        answer = int(input("Выберете что сделать с вакансиями\n1:Отсортировать\n2:Добавить в список вакансий\n3:Выход"))
+        if answer == 2:
+            counter = 0
             for vacancy_data in vacancies:
-                vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
-                                        salary=vacancy_data['salary'],
-                                        requirements=vacancy_data["requirements"])
-                vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link, 'salary': vacancy_class.salary,
-                               "requirements": vacancy_class.requirements}
-                vacancy_storage.add_vacancy(vacancy_dir)
-                counter += 1
-        print("Вакансии успешно добавлены")
+                if counter < int(top_n):
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+                                            salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link,
+                                   'salary': vacancy_class.salary,
+                                   "requirements": vacancy_class.requirements}
+                    vacancy_storage.add_vacancy(vacancy_dir)
+                    counter += 1
+            print("Вакансии успешно добавлены")
+        elif answer == 1:
+            counter = 0
+            vacancises_to_sort = []
+            for vacancy_data in vacancies:
+                if counter < top_n:
+                    vacancy_class = Vacancy(title=vacancy_data['title'], link=vacancy_data['link'],
+                                            salary=vacancy_data['salary'], requirements=vacancy_data["requirements"])
+                    vacancy_dir = {'title': vacancy_class.title, 'link': vacancy_class.link,
+                                   'salary': vacancy_class.salary,
+                                   "requirements": vacancy_class.requirements}
+                    vacancises_to_sort.append(vacancy_dir)
+                    counter += 1
+            for vacancy in sort_vacancies(vacancises_to_sort):
+                counter = 0
+                if counter < top_n:
+                    print_vacancy(vacancy)
+                    counter += 1
 
 
 # Выбор четвёртого пункта меню
