@@ -6,7 +6,10 @@ class Vacancy:
         self.title = title
         self.link = link
         self.salary = salary
-        self.requirements = str(requirements).replace('<highlighttext>', '').replace("</highlighttext>", "")
+        if type(requirements) == str:
+            self.requirements = str(requirements).replace('<highlighttext>', '').replace("</highlighttext>", "")
+        else:
+            self.requirements = requirements
 
 
 # Класс взаимодействия с вакансиями

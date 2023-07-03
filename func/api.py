@@ -1,5 +1,6 @@
 import os
 from abc import ABC, abstractmethod
+
 import requests
 
 # Получение api
@@ -47,14 +48,13 @@ class SuperJobAPI(GetVacancy):
                 "link": item["link"],
                 "salary": str(item.get("payment_to", "No salary info")) + "-" + str(
                     item.get("payment_from", "No salary info")),
-                "requirements": {"Опыт работы": str(item['experience']['title']),
-                                 "Вакцинация": str(item['covid_vaccination_requirement']['title']),
-                                 "Передвигаемость": str("Да" if item['moveable'] else "Нет"),
-                                 "Дети": str(item['children']['title']),
-                                 "Образование": str(item["education"]["title"]),
-                                 "Семейное положение": str(item['maritalstatus']['title']),
-                                 "Место работы": str(item["place_of_work"]["title"])}
-            }
+                "requirements": {'experience': item['experience']['title'],
+                                 "covid": item['covid_vaccination_requirement']['title'],
+                                 "moveable": str("Да" if item['moveable'] else "Нет"),
+                                 "kids": item['children']["title"],
+                                 "education": item["education"]["title"],
+                                 'maritalstatus': item['maritalstatus']['title'],
+                                 "place_of_work": item["place_of_work"]["title"]}}
             vacancies.append(vacancy)
         return vacancies
 
@@ -84,4 +84,3 @@ class HeadHunterAPI(GetVacancy):
             }
             vacancies.append(vacancy)
         return vacancies
-

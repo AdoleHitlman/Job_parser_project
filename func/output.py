@@ -23,8 +23,19 @@ def print_vacancy(vacancy):
         print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
     else:
         print(f"Зарплата:от {vacancy['salary']['from']} до {vacancy['salary']['to']}")
-    print(f"Требования: {vacancy['requirements']}")
-    print()
+    if type(vacancy['requirements']) == dict:
+        print("Требования:")
+        print(
+                f"Опыт работы: {vacancy['requirements']['experience']}\n"
+                f"Образование: {vacancy['requirements']['education']}\n"
+                f"Место работы: {vacancy['requirements']['place_of_work']}\n"
+                f"Вакцинация: {vacancy['requirements']['covid']}\n"
+                f"Дети: {vacancy['requirements']['kids']}\n"
+                f"Передвигаемость: {vacancy['requirements']['moveable']}\n"
+                f"Семейное положение: {vacancy['requirements']['maritalstatus']}")
+    else:
+        print(f"Требования: {vacancy['requirements']}")
+    print("\n")
 
 
 def main_menu():
@@ -37,4 +48,3 @@ def main_menu():
     print("0. Выход")
     choice = input("Выберите пункт меню: ")
     return choice
-
